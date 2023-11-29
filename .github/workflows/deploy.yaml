@@ -3,6 +3,14 @@ on:
   push:
     branches:
       - main
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  repository-projects: write
+
 jobs:
   AssumeRoleAndCallIdentity:
     runs-on: ubuntu-latest
