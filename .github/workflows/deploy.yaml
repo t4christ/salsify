@@ -38,5 +38,5 @@ jobs:
     - name: Build and Push Docker Image
       run: |
           aws ecr describe-repositories --repository-name salsify-ecr-repo
-          docker build -t ${{ secrets.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }} .
-          docker push ${{ secrets.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
+          docker build -t  ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }} .
+          docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
