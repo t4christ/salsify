@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  main-job:
+  AssumeRoleAndCallIdentity:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -15,6 +15,7 @@ jobs:
       with:
         # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
         role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
         aws-region: ${{ secrets.AWS_REGION }}
 
