@@ -12,7 +12,7 @@ permissions:
   repository-projects: write
 
 jobs:
-  AssumeRoleAndCallIdentity:
+  DeploymentToECR:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
