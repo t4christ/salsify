@@ -13,7 +13,7 @@ jobs:
     - name: Set up AWS CLI
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-asssume: ${{ secrets.AWS_ASSUME_ROLE }}
+        role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Get build ID
