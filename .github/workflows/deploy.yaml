@@ -29,16 +29,16 @@ jobs:
       id: getbuildid
       run: echo "build_id=$(echo $GITHUB_SHA | cut -c1-8)" >> $GITHUB_OUTPUT
     
-    - name: install trivy
-      run: |
-        #install trivy
-        sudo apt-get install wget apt-transport-https gnupg lsb-release -y
-        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-        echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-        sudo apt-get update
-        sudo apt-get install trivy -y
-        #command to scan files
-        trivy fs .
+    # - name: install trivy
+    #   run: |
+    #     #install trivy
+    #     sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+    #     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+    #     echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+    #     sudo apt-get update
+    #     sudo apt-get install trivy -y
+    #     #command to scan files
+    #     trivy fs .
         
 
     - name: Login to Amazon ECR
@@ -47,8 +47,20 @@ jobs:
       # with:
         # mask-password: 'true'
         
-    - name: Build and Push Docker Image
+    - name: Build Docker Image
       run: |
           docker build -t  ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }} .
-          trivy --exit-code 1 ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
+
+    - name: Run Trivy vulnerability scanner in repo mode
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: '${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}'
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Push Docker Image
+      run: |
           docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
