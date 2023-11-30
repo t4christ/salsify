@@ -12,7 +12,7 @@ permissions:
   repository-projects: write
 
 jobs:
-  DeploymentToECR:
+  build-to-ecr:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -28,6 +28,18 @@ jobs:
     - name: Get build ID
       id: getbuildid
       run: echo "build_id=$(echo $GITHUB_SHA | cut -c1-8)" >> $GITHUB_OUTPUT
+    
+    - name: install trivy
+      run: |
+        #install trivy
+        sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install trivy -y
+        #command to scan files
+        trivy fs .
+        
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -37,6 +49,6 @@ jobs:
         
     - name: Build and Push Docker Image
       run: |
-          aws ecr describe-repositories --repository-name salsify-ecr-repo
           docker build -t  ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }} .
+          trivy --exit-code 1 ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
           docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
