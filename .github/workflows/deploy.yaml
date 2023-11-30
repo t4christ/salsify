@@ -29,24 +29,10 @@ jobs:
       id: getbuildid
       run: echo "build_id=$(echo $GITHUB_SHA | cut -c1-8)" >> $GITHUB_OUTPUT
     
-    # - name: install trivy
-    #   run: |
-    #     #install trivy
-    #     sudo apt-get install wget apt-transport-https gnupg lsb-release -y
-    #     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-    #     echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-    #     sudo apt-get update
-    #     sudo apt-get install trivy -y
-    #     #command to scan files
-    #     trivy fs .
-        
-
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
-      # with:
-        # mask-password: 'true'
-        
+
     - name: Build Docker Image
       run: |
           docker build -t  ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }} .
@@ -60,6 +46,7 @@ jobs:
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL'
+        scanners: 'vuln,secret,config'
 
     - name: Push Docker Image
       run: |
