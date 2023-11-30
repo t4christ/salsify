@@ -25,6 +25,6 @@ COPY --from=builder /salsify/goapp/demo/index.html /salsify/goapp/demo
 
 USER ${UID}:${GID}
 
-EXPOSE 8000
+EXPOSE 80
 
 CMD ["./salsify-news"]
