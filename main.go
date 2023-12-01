@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	"html/template"
 	"log"
 	"math"
@@ -106,10 +106,10 @@ func searchHandler(newsapi *news.Client) http.HandlerFunc {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Println("Error loading .env file")
+	// }
 
 	port := os.Getenv("PORT")
 	fs := http.FileServer(http.Dir("assets"))
