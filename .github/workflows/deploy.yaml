@@ -36,6 +36,7 @@ jobs:
     - name: Build Docker Image
       run: |
           docker build -t  ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }} .
+          docker build -t  ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:latest
 
     - name: Run Trivy vulnerability scanner in repo mode
       uses: aquasecurity/trivy-action@master
@@ -51,3 +52,4 @@ jobs:
     - name: Push Docker Image
       run: |
           docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
+          docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:latest
