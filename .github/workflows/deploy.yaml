@@ -58,6 +58,7 @@ jobs:
       - name: New Image For ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
           task-definition: ${{ secrets.ECS_TASK_DEFINITION }}
           container-name: ${{ secrets.ECS_CONTAINER_NAME }}
           image: ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
