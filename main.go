@@ -120,6 +120,7 @@ func main() {
 
 	apiKey := os.Getenv("NEWS_API_KEY")
 	if apiKey == "" {
+		log.Println("Error loading .env file")
 		log.Fatal("Env: apiKey must be set")
 	}
 
