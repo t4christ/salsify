@@ -12,7 +12,7 @@ permissions:
   repository-projects: write
 
 jobs:
-  build-to-ecr:
+  build-and-deploy-to-ecr:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -54,19 +54,18 @@ jobs:
           docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
           docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:latest
 
-  deploy-to-ecs:
-      - name: New Image For ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ secrets.ECS_TASK_DEFINITION }}
-          container-name: ${{ secrets.ECS_CONTAINER_NAME }}
-          image: ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
+    - name: New Image For ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ secrets.ECS_TASK_DEFINITION }}
+        container-name: ${{ secrets.ECS_CONTAINER_NAME }}
+        image: ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
 
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ secrets.ECS_SERVICE }}
-          cluster: ${{ secrets.ECS_CLUSTER }}
-          wait-for-service-stability: true
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ secrets.ECS_SERVICE }}
+        cluster: ${{ secrets.ECS_CLUSTER }}
+        wait-for-service-stability: true
