@@ -53,7 +53,6 @@ jobs:
       run: |
           docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
           docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:latest
-
     # - name: New Image For ECS task definition
     #   id: task-def
     #   uses: aws-actions/amazon-ecs-render-task-definition@v1
