@@ -30,7 +30,6 @@ jobs:
       run: echo "build_id=$(echo $GITHUB_SHA | cut -c1-8)" >> $GITHUB_OUTPUT
     
     - name: Login to Amazon ECR
-      id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
     - name: Build Docker Image
@@ -55,12 +54,10 @@ jobs:
           docker push ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:latest
 
     - name: New Image For ECS task definition
-      id: task-def
       run: |
        aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
