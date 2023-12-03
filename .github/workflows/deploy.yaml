@@ -60,7 +60,7 @@ jobs:
       with:
         task-definition: ${{ secrets.ECS_TASK_DEFINITION }}
         container-name: ${{ secrets.ECS_CONTAINER_NAME }}
-        image: ${{ vars.ECR_REGISTRY }}/${{ var.ECR_REPOSITORY}}
+        image: ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
