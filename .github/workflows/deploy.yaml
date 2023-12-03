@@ -35,13 +35,13 @@ jobs:
 
     - name: Build Docker Image
       run: |
-          docker build -t  ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }} .
-          docker build -t  ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:latest .
+          docker build -t  ${{ vars.ECR_REGISTRY }}/${{ var.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }} .
+          docker build -t  ${{ vars.ECR_REGISTRY }}/${{ var.ECR_REPOSITORY}}:latest .
 
     - name: Run Trivy vulnerability scanner in repo mode
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: '${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}'
+        image-ref: '${{ vars.ECR_REGISTRY }}/${{ var.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }}'
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
@@ -51,18 +51,18 @@ jobs:
 
     - name: Push Docker Image
       run: |
-          docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
-          docker push ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:latest
+          docker push ${{ vars.ECR_REGISTRY }}/${{ var.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }}
+          docker push ${{ vars.ECR_REGISTRY }}/${{ var.ECR_REPOSITORY}}:latest
     # - name: New Image For ECS task definition
     #   id: task-def
-    #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+    #   uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
     #   with:
     #     task-definition: ${{ secrets.ECS_TASK_DEFINITION }}
     #     container-name: ${{ secrets.ECS_CONTAINER_NAME }}
-    #     image: ${{ vars.ECR_REGISTRY }}/salsify-ecr-repo:${{ steps.getbuildid.outputs.build_id }}
+    #     image: ${{ vars.ECR_REGISTRY }}/${{ var.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }}
 
     # - name: Deploy Amazon ECS task definition
-    #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+    #   uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
     #   with:
     #     task-definition: ${{ steps.task-def.outputs.task-definition }}
     #     service: ${{ secrets.ECS_SERVICE }}

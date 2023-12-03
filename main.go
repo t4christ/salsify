@@ -115,7 +115,7 @@ func main() {
 	fs := http.FileServer(http.Dir("assets"))
 
 	if port == "" {
-		port = "80"
+		port = "4000"
 	}
 
 	apiKey := os.Getenv("NEWS_API_KEY")
