@@ -34,8 +34,8 @@ jobs:
 
     - name: Build docker image
       run: |
-          docker buildx build  -t ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }} .
-          docker buildx build  -t ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:latest .
+          docker build  -t ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }} .
+          docker build  -t ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:latest .
 
     - name: Run trivy vulnerability scanner in repo mode
       uses: aquasecurity/trivy-action@master
