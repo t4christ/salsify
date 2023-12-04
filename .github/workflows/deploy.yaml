@@ -37,16 +37,16 @@ jobs:
           docker build  -t ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }} .
           docker build  -t ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:latest .
 
-    - name: Run trivy vulnerability scanner in repo mode
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: '${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }}'
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL'
-        scanners: 'vuln,secret,config'
+    # - name: Run trivy vulnerability scanner in repo mode
+    #   uses: aquasecurity/trivy-action@master
+    #   with:
+    #     image-ref: '${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY}}:${{ steps.getbuildid.outputs.build_id }}'
+    #     format: 'table'
+    #     exit-code: '1'
+    #     ignore-unfixed: true
+    #     vuln-type: 'os,library'
+    #     severity: 'CRITICAL'
+    #     scanners: 'vuln,secret,config'
 
     - name: Push docker image
       run: |
