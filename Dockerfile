@@ -1,30 +1,30 @@
-FROM golang:1.19-alpine as builder
+FROM php:7.4-apache
 
-WORKDIR /salsify/goapp/demo
+# Create a non-root user (change "1001" to your desired user and group IDs)
+RUN useradd -u 1001 -g www-data -m salsify
 
-COPY go.mod go.sum .
+# Set the working directory to /var/www/html
+WORKDIR /var/www/html
 
-RUN go mod download
+COPY salsify-php-port.conf  /etc/apache2/ports.conf 
 
-COPY . .
+RUN apt-get update && apt-get install -y \
+    zip \
+    unzip
 
-RUN go build -o salsify-news
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && composer require slim/slim && composer require slim/psr7 && composer require nyholm/psr7
 
+# Copy the current directory contents into the container at /var/www/html
+COPY index.php .
 
-FROM golang:1.19-alpine
+# Change the ownership of application files to the non-root user
+RUN chown -R salsify:www-data .
 
-ARG UID=65534
-ARG GID=65534
+# Expose port 80 for Apache
+EXPOSE 8080
 
-WORKDIR /salsify/goapp/demo
+# Switch to the non-root user
+USER salsify
 
-COPY --from=builder /salsify/goapp/demo/salsify-news /salsify/goapp/demo
-COPY --from=builder /salsify/goapp/demo/assets /salsify/goapp/demo/assets
-COPY --from=builder /salsify/goapp/demo/index.html /salsify/goapp/demo
-
-
-USER ${UID}:${GID}
-
-EXPOSE 80
-
-CMD ["./salsify-news"]
+# Start Apache web server
+CMD ["apache2-foreground"]
