@@ -21,7 +21,7 @@ COPY index.php .
 RUN chown -R salsify:www-data .
 
 # Expose port 80 for Apache
-EXPOSE 8080
+EXPOSE 4000
 
 # Switch to the non-root user
 USER salsify
